@@ -18,6 +18,7 @@ from pygame.locals import (
 #initialise pygame modules
 pg.init()
 #set window title
+pg.display.set_caption("untitled rpg")
 #set window size variables
 WIDTH = 1280
 HEIGHT = 720
@@ -43,13 +44,26 @@ class Player(pg.sprite.Sprite):
     #move the sprite based on keypresses    
     def update(self, pressed_keys):
         if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -15)
+            self.rect.move_ip(0, -25)
         if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, 15)
+            self.rect.move_ip(0, 25)
         if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-15, 0)
+            self.rect.move_ip(-25, 0)
         if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(15, 0)
+            self.rect.move_ip(25, 0)
+
+        
+        #stop player from moving past screen boundaries
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH;
+        if self.rect.top <= 0:
+            self.rect.top = 0
+        if self.rect.bottom >= HEIGHT:
+            self.rect.bottom = HEIGHT
+
+
 
 #instantiate the player
 player = Player()
