@@ -1,6 +1,9 @@
 #import essential modules
 import pygame as pg
 import sys
+#import random for random numbers
+import random
+import math
 
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
@@ -26,6 +29,12 @@ HEIGHT = 720
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 #set screen background
 BG = (25, 250, 170)
+#sets game frames per second
+FPS = 60
+#create clock "game ticks"
+clock = pg.time.Clock()
+
+
 
 
 #class created to instantiate the Player Character
@@ -38,22 +47,17 @@ class Player(pg.sprite.Sprite):
         #created surface for the player
         self.surf = pg.Surface((50, 50))
         self.surf.fill((255, 255, 255))
+        self.playerX = 0
+        self.playerY = 0
         #creates rect for player, also useful for collision
-        self.rect = self.surf.get_rect()   
+        self.rect = self.surf.get_rect()
+        #movement speed variable
+        self.speed = 10
+        #used for sprite animation
+        self.frame = 0
 
-    #move the sprite based on keypresses    
-    def update(self, pressed_keys):
-        if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -25)
-        if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, 25)
-        if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-25, 0)
-        if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(25, 0)
-
-        
-        #stop player from moving past screen boundaries
+    #stop player from leaving boundaries    
+    def in_bounds(self):
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > WIDTH:
@@ -68,9 +72,12 @@ class Player(pg.sprite.Sprite):
 #instantiate the player
 player = Player()
 
+
 run = True
 #event loop
 while run:
+
+    clock.tick(60)
     
     #run through every event in the queue
     for event in pg.event.get():
@@ -78,11 +85,18 @@ while run:
         if event.type == pg.QUIT:
             run = False
 
+    
+        if event.type == KEYDOWN:
+            if event.key == K_DOWN:
+                print("down")
+                player.rect.move_ip(0, 25)
+
         #references keys pressed to a variable then utilises
         #player class update method to move sprite based on values
         #within the methods code block
         pressed_keys = pg.key.get_pressed()
-        player.update(pressed_keys)
+        #call in bounds method
+        player.in_bounds()
 
         screen.fill(BG)
 
