@@ -1,5 +1,4 @@
 #import essential modules
-from cgitb import text
 import pygame as pg
 import sys
 #import random for random numbers
@@ -30,17 +29,29 @@ HEIGHT = 720
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 #set screen background
 BG = (135, 206, 235)
-#sets game frames per second
-FPS = 60
 #create clock "game ticks"
 clock = pg.time.Clock()
 #set text font
 score_font = pg.font.Font(None, 50)
-player_surf = 
+#create reference variable for slime enemy sprite
+slime_surf = pg.image.load("textures/enemy-0.png").convert_alpha()
+#set initial position of slime enemy
+slime_x_pos = 1250
+slime_y_pos = 545
 #create reference variable for ground texture
-ground_surf = pg.image.load("textures/grass.png")
+ground_surf = pg.image.load("textures/grass.png").convert_alpha()
 #create score surface
 score_surf = score_font.render("Score", False, (215, 215, 210))
+
+
+#initialize font for fps counter then return current value per game tick
+fps_font = pg.font.SysFont("Arial", 18)
+def display_fps():
+    fps = str(int(clock.get_fps()))
+    fps_text = fps_font.render(fps, 1, pg.Color("Coral"))
+    return fps_text
+
+
 
 
 #class created to instantiate the Player Character
@@ -51,23 +62,9 @@ class Player(pg.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
         #created surface for the player
-        self.surf = pg.Surface((50, 50))
-        self.surf.fill((255, 255, 255))
         #creates rect for player, also useful for collision
-        self.rect = self.surf.get_rect()
         #used for sprite animation
         self.frame = 0
-
-    #stop player from leaving boundaries    
-    def in_bounds(self):
-        if self.rect.left < 0:
-            self.rect.left = 0
-        if self.rect.right > WIDTH:
-            self.rect.right = WIDTH;
-        if self.rect.top <= 0:
-            self.rect.top = 0
-        if self.rect.bottom >= HEIGHT:
-            self.rect.bottom = HEIGHT
 
 
 
@@ -92,15 +89,19 @@ while run:
         #player class update method to move sprite based on values
         #within the methods code block
         pressed_keys = pg.key.get_pressed()
-        #call in bounds method
-        player.in_bounds()
+
 
         screen.fill(BG)
 
-        #draws the surface/"player" on the main screen and positions
-        #it in the middle of the screen
-        screen.blit(player.surf, player.rect)
+    
         screen.blit(ground_surf, (0, 600))
         screen.blit(score_surf, (570, 50))
+        slime_x_pos -= 2
+        if slime_x_pos < -100: slime_x_pos = 1290
+        screen.blit(slime_surf, (slime_x_pos, slime_y_pos))
+        screen.blit(display_fps(), (10, 10))
+
+
 
         pg.display.update()
+        clock.tick(60)
