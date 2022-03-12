@@ -1,4 +1,5 @@
 #import essential modules
+from cgitb import text
 import pygame as pg
 import sys
 #import random for random numbers
@@ -28,13 +29,18 @@ HEIGHT = 720
 #create screen
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 #set screen background
-BG = (25, 250, 170)
+BG = (135, 206, 235)
 #sets game frames per second
 FPS = 60
 #create clock "game ticks"
 clock = pg.time.Clock()
-
-
+#set text font
+score_font = pg.font.Font(None, 50)
+player_surf = 
+#create reference variable for ground texture
+ground_surf = pg.image.load("textures/grass.png")
+#create score surface
+score_surf = score_font.render("Score", False, (215, 215, 210))
 
 
 #class created to instantiate the Player Character
@@ -47,12 +53,8 @@ class Player(pg.sprite.Sprite):
         #created surface for the player
         self.surf = pg.Surface((50, 50))
         self.surf.fill((255, 255, 255))
-        self.playerX = 0
-        self.playerY = 0
         #creates rect for player, also useful for collision
         self.rect = self.surf.get_rect()
-        #movement speed variable
-        self.speed = 10
         #used for sprite animation
         self.frame = 0
 
@@ -85,11 +87,6 @@ while run:
         if event.type == pg.QUIT:
             run = False
 
-    
-        if event.type == KEYDOWN:
-            if event.key == K_DOWN:
-                print("down")
-                player.rect.move_ip(0, 25)
 
         #references keys pressed to a variable then utilises
         #player class update method to move sprite based on values
@@ -103,5 +100,7 @@ while run:
         #draws the surface/"player" on the main screen and positions
         #it in the middle of the screen
         screen.blit(player.surf, player.rect)
+        screen.blit(ground_surf, (0, 600))
+        screen.blit(score_surf, (570, 50))
 
         pg.display.update()
