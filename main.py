@@ -1,4 +1,5 @@
 #import essential modules
+from tracemalloc import start
 import pygame as pg
 import sys
 #import random for random numbers
@@ -22,7 +23,7 @@ from pygame.locals import (
 #initialise pygame modules
 pg.init()
 #set window title
-pg.display.set_caption("untitled rpg")
+pg.display.set_caption("untitled")
 #set window size variables
 WIDTH = 1280
 HEIGHT = 720
@@ -39,8 +40,7 @@ slime_surf = pg.image.load("textures/enemy-0.png").convert_alpha()
 slime_rect = slime_surf.get_rect(midbottom = (1250, 615))
 #create reference variable for ground texture
 ground_surf = pg.image.load("textures/grass.png").convert_alpha()
-#create score surface
-score_surf = score_font.render("Score", False, (215, 215, 210))
+
 
 
 #initialize font for fps counter then return current value per game tick
@@ -49,6 +49,14 @@ def display_fps():
     fps = str(int(clock.get_fps()))
     fps_text = fps_font.render(fps, 1, pg.Color("Coral"))
     return fps_text
+
+def display_score():
+    #start time used to reset score on new game
+    current_time = pg.time.get_ticks() - start_time
+    #round is used to remove the numbers after the decimal place
+    score_surf = score_font.render(str(round(current_time/800)), False, (64, 64, 64))
+    score_rect = score_surf.get_rect(center = (640, 100))
+    screen.blit(score_surf, score_rect)
 
 
 
@@ -79,10 +87,12 @@ player = Player()
 #starting conditions
 game_active = True
 run = True
+start_time = 0
 #game loop
 while run:
     
     clock.tick(60)
+    pressed_keys = pg.key.get_pressed()
 
     #run through every event in the queue / event loop
     for event in pg.event.get():
@@ -90,22 +100,28 @@ while run:
         if event.type == pg.QUIT:
             run = False
 
-        #check for key down event
-        if event.type == KEYDOWN:
-            #jump
-            if event.key == K_SPACE and player.rect.bottom >= 600:
-                player.gravity = -20
-    
-        pressed_keys = pg.key.get_pressed()
-    
+
+        #runs methods if main game state active
+        if game_active:
+            #check for key down event
+            if event.type == KEYDOWN:
+                #jump
+                if event.key == K_SPACE and player.rect.bottom >= 600:
+                    player.gravity = -20
+        
+        else:
+            if event.type == KEYDOWN:
+                game_active = True
+                slime_rect.left = 1280
+                start_time = pg.time.get_ticks()
+
     if game_active:
         #fill sky
         screen.fill(BG)
 
         #draw ground
         screen.blit(ground_surf, (0, 600))
-        #draw score count    
-        screen.blit(score_surf, (570, 50))
+        
         #draw slime enemy
         screen.blit(slime_surf, slime_rect)
         
@@ -129,8 +145,13 @@ while run:
         #draw fps
         screen.blit(display_fps(), (10, 10))
 
+        #draw score
+        display_score()
+
     else:
         screen.fill((0, 0, 0))
+
+    
     
     #redraw screen every tick
     pg.display.update()
