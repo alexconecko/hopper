@@ -15,6 +15,7 @@ from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
     QUIT,
+    K_SPACE,
 )
 
 
@@ -35,8 +36,7 @@ clock = pg.time.Clock()
 score_font = pg.font.Font(None, 50)
 #create reference variable for slime enemy sprite
 slime_surf = pg.image.load("textures/enemy-0.png").convert_alpha()
-slime_surf = pg.transform.scale(slime_surf, (128, 128))
-slime_rect = slime_surf.get_rect(bottomright = (1250, 635))
+slime_rect = slime_surf.get_rect(midbottom = (1250, 615))
 #create reference variable for ground texture
 ground_surf = pg.image.load("textures/grass.png").convert_alpha()
 #create score surface
@@ -67,6 +67,8 @@ class Player(pg.sprite.Sprite):
         self.rect = self.surf.get_rect(midbottom = (80, 605))
         #used for sprite animation
         self.frame = 0
+        #attribute created for gravity manipulation
+        self.gravity = 0
         
 
 
@@ -76,21 +78,23 @@ player = Player()
 
 
 run = True
-#event loop
+#game loop
 while run:
     
     clock.tick(60)
 
-    #run through every event in the queue
+    #run through every event in the queue / event loop
     for event in pg.event.get():
         #if user clicks X button then exit program
         if event.type == pg.QUIT:
             run = False
 
-
-        #references keys pressed to a variable then utplayer_surf = pg.image.load("textures/player-frame-0.png")ilises
-        #player class update method to move sprite based on values
-        #within the methods code block
+        #check for key down event
+        if event.type == KEYDOWN:
+            #jump
+            if event.key == K_SPACE and player.rect.bottom >= 600:
+                player.gravity = -20
+    
         pressed_keys = pg.key.get_pressed()
 
     #fill sky
@@ -109,9 +113,18 @@ while run:
 
     #draw player
     screen.blit(player.surf, player.rect)
+
+    #handle jumping and landing on ground
+    player.gravity += 0.7
+    player.rect.y += player.gravity
+    if player.rect.bottom >= 600: player.rect.bottom = 600
+
+    if player.rect.colliderect(slime_rect):
+        print("hit!")
+
+
     #draw fps
     screen.blit(display_fps(), (10, 10))
-
     
     pg.display.update()
         
