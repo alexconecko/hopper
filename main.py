@@ -38,6 +38,7 @@ score_font = pg.font.Font(None, 50)
 #create reference variable for slime enemy sprite
 slime_surf = pg.image.load("textures/enemy-0.png").convert_alpha()
 slime_rect = slime_surf.get_rect(midbottom = (1250, 615))
+
 #create reference variable for ground texture
 ground_surf = pg.image.load("textures/grass.png").convert_alpha()
 
@@ -54,7 +55,8 @@ def display_score():
     #start time used to reset score on new game
     current_time = pg.time.get_ticks() - start_time
     #round is used to remove the numbers after the decimal place
-    score_surf = score_font.render(str(round(current_time/800)), False, (64, 64, 64))
+    score_surf = score_font.render(str("score: " + str(round(current_time/800)) + "m"), 
+                                   False, (64, 64, 64))
     score_rect = score_surf.get_rect(center = (640, 100))
     screen.blit(score_surf, score_rect)
 
@@ -68,16 +70,42 @@ def display_score():
 class Player(pg.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
+        #attribute created for gravity manipulation
+        self.gravity = 0
+        self.run_frame_1 = pg.image.load("textures/player-frame-0.png").convert_alpha()
+        self.run_frame_1 = pg.transform.scale(self.run_frame_1, (128, 128))
+        self.run_frame_2 = pg.image.load("textures/player-frame-1.png").convert_alpha()
+        self.run_frame_2= pg.transform.scale(self.run_frame_2, (128, 128))
+        self.run_frame_3 = pg.image.load("textures/player-frame-2.png").convert_alpha()
+        self.run_frame_3 = pg.transform.scale(self.run_frame_3, (128, 128))
+        self.run_anim = [self.run_frame_1, self.run_frame_2, self.run_frame_3]
+        self.run_index = 0
+        self.jump_frame_1 = pg.image.load("textures/player-jump-0.png").convert_alpha()
+        self.jump_frame_1 = pg.transform.scale(self.jump_frame_1, (128, 128))
+        self.jump_frame_2 = pg.image.load("textures/player-jump-2.png").convert_alpha()
+        self.jump_frame_2 = pg.transform.scale(self.jump_frame_2, (128, 128))
+        self.jump_anim = [self.jump_frame_1, self.jump_frame_2]
+        self.jump_index = 0
         #created surface for the player
-        self.surf = pg.image.load("textures/player-frame-0.png")
+        self.surf = pg.image.load("textures/player-frame-0.png").convert_alpha()
         self.surf = pg.transform.scale(self.surf, (128, 128))
         #creates rect for player, also useful for collision
         self.rect = self.surf.get_rect(midbottom = (80, 605))
-        #used for sprite animation
-        self.frame = 0
-        #attribute created for gravity manipulation
-        self.gravity = 0
+
+
+    def player_anims(self):
+        global player
         
+        #jump animations
+        if player.rect.bottom < 600:
+            player.surf = player.jump_anim[0]
+        
+        else:
+            player.run_index += 0.1
+            if player.run_index >= len(player.run_anim): player.run_index = 0
+            player.surf = player.run_anim[int(player.run_index)]
+
+        #run animations
 
 
 
@@ -107,7 +135,7 @@ while run:
             if event.type == KEYDOWN:
                 #jump
                 if event.key == K_SPACE and player.rect.bottom >= 600:
-                    player.gravity = -20
+                    player.gravity = -17
         
         else:
             if event.type == KEYDOWN:
@@ -126,11 +154,12 @@ while run:
         screen.blit(slime_surf, slime_rect)
         
         #logic to "respawn" snail after it leaves screen
-        slime_rect.x -= 4
+        slime_rect.x -= 5
         if slime_rect.right <= -10: slime_rect.x = 1290
 
         #draw player
         screen.blit(player.surf, player.rect)
+        player.player_anims()
 
         #handle jumping and landing on ground
         player.gravity += 0.62
