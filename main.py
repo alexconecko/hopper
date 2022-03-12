@@ -35,9 +35,8 @@ clock = pg.time.Clock()
 score_font = pg.font.Font(None, 50)
 #create reference variable for slime enemy sprite
 slime_surf = pg.image.load("textures/enemy-0.png").convert_alpha()
-#set initial position of slime enemy
-slime_x_pos = 1250
-slime_y_pos = 545
+slime_surf = pg.transform.scale(slime_surf, (128, 128))
+slime_rect = slime_surf.get_rect(bottomright = (1250, 635))
 #create reference variable for ground texture
 ground_surf = pg.image.load("textures/grass.png").convert_alpha()
 #create score surface
@@ -62,9 +61,13 @@ class Player(pg.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
         #created surface for the player
+        self.surf = pg.image.load("textures/player-frame-0.png")
+        self.surf = pg.transform.scale(self.surf, (128, 128))
         #creates rect for player, also useful for collision
+        self.rect = self.surf.get_rect(midbottom = (80, 600))
         #used for sprite animation
         self.frame = 0
+        
 
 
 
@@ -85,7 +88,7 @@ while run:
             run = False
 
 
-        #references keys pressed to a variable then utilises
+        #references keys pressed to a variable then utplayer_surf = pg.image.load("textures/player-frame-0.png")ilises
         #player class update method to move sprite based on values
         #within the methods code block
         pressed_keys = pg.key.get_pressed()
@@ -95,13 +98,13 @@ while run:
 
     
         screen.blit(ground_surf, (0, 600))
+        
         screen.blit(score_surf, (570, 50))
-        slime_x_pos -= 2
-        if slime_x_pos < -100: slime_x_pos = 1290
-        screen.blit(slime_surf, (slime_x_pos, slime_y_pos))
+        
+        screen.blit(slime_surf, slime_rect)
+
+        screen.blit(player.surf, player.rect)
         screen.blit(display_fps(), (10, 10))
-
-
 
         pg.display.update()
         clock.tick(60)
