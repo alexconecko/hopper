@@ -64,7 +64,7 @@ class Player(pg.sprite.Sprite):
         self.surf = pg.image.load("textures/player-frame-0.png")
         self.surf = pg.transform.scale(self.surf, (128, 128))
         #creates rect for player, also useful for collision
-        self.rect = self.surf.get_rect(midbottom = (80, 600))
+        self.rect = self.surf.get_rect(midbottom = (80, 605))
         #used for sprite animation
         self.frame = 0
         
@@ -78,9 +78,9 @@ player = Player()
 run = True
 #event loop
 while run:
-
-    clock.tick(60)
     
+    clock.tick(60)
+
     #run through every event in the queue
     for event in pg.event.get():
         #if user clicks X button then exit program
@@ -93,18 +93,25 @@ while run:
         #within the methods code block
         pressed_keys = pg.key.get_pressed()
 
+    #fill sky
+    screen.fill(BG)
 
-        screen.fill(BG)
+    #draw ground
+    screen.blit(ground_surf, (0, 600))
+    #draw score count    
+    screen.blit(score_surf, (570, 50))
+    #draw slime enemy
+    screen.blit(slime_surf, slime_rect)
+    
+    #logic to "respawn" snail after it leaves screen
+    slime_rect.x -= 4
+    if slime_rect.right <= -10: slime_rect.x = 1290
+
+    #draw player
+    screen.blit(player.surf, player.rect)
+    #draw fps
+    screen.blit(display_fps(), (10, 10))
 
     
-        screen.blit(ground_surf, (0, 600))
+    pg.display.update()
         
-        screen.blit(score_surf, (570, 50))
-        
-        screen.blit(slime_surf, slime_rect)
-
-        screen.blit(player.surf, player.rect)
-        screen.blit(display_fps(), (10, 10))
-
-        pg.display.update()
-        clock.tick(60)
