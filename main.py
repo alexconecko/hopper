@@ -76,7 +76,8 @@ class Player(pg.sprite.Sprite):
 #instantiate the player
 player = Player()
 
-
+#starting conditions
+game_active = True
 run = True
 #game loop
 while run:
@@ -96,35 +97,41 @@ while run:
                 player.gravity = -20
     
         pressed_keys = pg.key.get_pressed()
-
-    #fill sky
-    screen.fill(BG)
-
-    #draw ground
-    screen.blit(ground_surf, (0, 600))
-    #draw score count    
-    screen.blit(score_surf, (570, 50))
-    #draw slime enemy
-    screen.blit(slime_surf, slime_rect)
     
-    #logic to "respawn" snail after it leaves screen
-    slime_rect.x -= 4
-    if slime_rect.right <= -10: slime_rect.x = 1290
+    if game_active:
+        #fill sky
+        screen.fill(BG)
 
-    #draw player
-    screen.blit(player.surf, player.rect)
+        #draw ground
+        screen.blit(ground_surf, (0, 600))
+        #draw score count    
+        screen.blit(score_surf, (570, 50))
+        #draw slime enemy
+        screen.blit(slime_surf, slime_rect)
+        
+        #logic to "respawn" snail after it leaves screen
+        slime_rect.x -= 4
+        if slime_rect.right <= -10: slime_rect.x = 1290
 
-    #handle jumping and landing on ground
-    player.gravity += 0.7
-    player.rect.y += player.gravity
-    if player.rect.bottom >= 600: player.rect.bottom = 600
+        #draw player
+        screen.blit(player.surf, player.rect)
 
-    if player.rect.colliderect(slime_rect):
-        print("hit!")
+        #handle jumping and landing on ground
+        player.gravity += 0.62
+        player.rect.y += player.gravity
+        if player.rect.bottom >= 600: player.rect.bottom = 600
 
+        #check for collision with slime
+        if slime_rect.colliderect(player.rect):
+            print("hit!")
+            game_active = False
 
-    #draw fps
-    screen.blit(display_fps(), (10, 10))
+        #draw fps
+        screen.blit(display_fps(), (10, 10))
+
+    else:
+        screen.fill((0, 0, 0))
     
+    #redraw screen every tick
     pg.display.update()
         
