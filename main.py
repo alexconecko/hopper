@@ -72,13 +72,11 @@ class Player(pg.sprite.Sprite):
         super(Player, self).__init__()
         #attribute created for gravity manipulation
         self.gravity = 0
-        self.run_frame_1 = pg.image.load("textures/player-frame-0.png").convert_alpha()
-        self.run_frame_1 = pg.transform.scale(self.run_frame_1, (128, 128))
         self.run_frame_2 = pg.image.load("textures/player-frame-1.png").convert_alpha()
         self.run_frame_2= pg.transform.scale(self.run_frame_2, (128, 128))
         self.run_frame_3 = pg.image.load("textures/player-frame-2.png").convert_alpha()
         self.run_frame_3 = pg.transform.scale(self.run_frame_3, (128, 128))
-        self.run_anim = [self.run_frame_1, self.run_frame_2, self.run_frame_3]
+        self.run_anim = [self.run_frame_2, self.run_frame_3]
         self.run_index = 0
         self.jump_frame_1 = pg.image.load("textures/player-jump-0.png").convert_alpha()
         self.jump_frame_1 = pg.transform.scale(self.jump_frame_1, (128, 128))
@@ -101,7 +99,7 @@ class Player(pg.sprite.Sprite):
             player.surf = player.jump_anim[0]
         
         else:
-            player.run_index += 0.1
+            player.run_index += 0.05
             if player.run_index >= len(player.run_anim): player.run_index = 0
             player.surf = player.run_anim[int(player.run_index)]
 
