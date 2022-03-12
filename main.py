@@ -22,8 +22,11 @@ from pygame.locals import (
 
 #initialise pygame modules
 pg.init()
+#set window icon image
+game_icon = pg.image.load("textures/hopper.png")
+pg.display.set_icon(game_icon)
 #set window title
-pg.display.set_caption("untitled")
+pg.display.set_caption("HOPPER")
 #set window size variables
 WIDTH = 1280
 HEIGHT = 720
@@ -37,7 +40,7 @@ clock = pg.time.Clock()
 score_font = pg.font.Font(None, 50)
 #create reference variable for slime enemy sprite
 slime_surf = pg.image.load("textures/enemy-0.png").convert_alpha()
-slime_rect = slime_surf.get_rect(midbottom = (1250, 615))
+slime_rect = slime_surf.get_rect(midbottom = (1250, 605))
 
 #create reference variable for ground texture
 ground_surf = pg.image.load("textures/grass.png").convert_alpha()
@@ -88,7 +91,7 @@ class Player(pg.sprite.Sprite):
         self.surf = pg.image.load("textures/player-frame-0.png").convert_alpha()
         self.surf = pg.transform.scale(self.surf, (128, 128))
         #creates rect for player, also useful for collision
-        self.rect = self.surf.get_rect(midbottom = (80, 605))
+        self.rect = self.surf.get_rect(midbottom = (80, 610))
 
 
     def player_anims(self):
