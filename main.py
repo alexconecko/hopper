@@ -30,7 +30,7 @@ HEIGHT = 720
 #create screen
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 #set screen background
-BG = (135, 206, 235)
+BG = pg.image.load("textures/lv1bg.png").convert_alpha()
 #create clock "game ticks"
 clock = pg.time.Clock()
 #set text font
@@ -143,7 +143,7 @@ while run:
 
     if game_active:
         #fill sky
-        screen.fill(BG)
+        screen.blit(BG, (0, 0))
 
         #draw ground
         screen.blit(ground_surf, (0, 600))
